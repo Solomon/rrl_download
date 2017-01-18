@@ -83,8 +83,7 @@ class Book
   end
 
   def chapter_numbers
-    chapter_links.map{ |l| l.split('/').last }.take(5)
-    #chapter_links.map{ |l| l.split('/').last }
+    chapter_links.map{ |l| l.split('/').last }
   end
 
   def book_title
@@ -162,6 +161,6 @@ class EpubBuilder
   end
 end
 
-test_book = Book.new(8220)
+test_book = Book.new(ARGV[0].to_i)
 e = EpubBuilder.new(test_book)
 e.build_book
