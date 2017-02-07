@@ -65,6 +65,20 @@ class Chapter
   end
 end
 
+class WuxiaChapter < Chapter
+  def chapter_url
+    @chapter_number
+  end
+
+  def chapter_title
+    chapter_object.css('.entry-header h1').text
+  end
+
+  def chapter_text
+    chapter_object.at('div[itemprop="articleBody"]').to_s
+  end
+end
+
 class Book
   def initialize(book_number)
     @book_number = book_number
@@ -192,7 +206,13 @@ class EpubBuilder
   end
 end
 
-binding.pry
-#test_book = Book.new(ARGV[0].to_i)
-#e = EpubBuilder.new(test_book)
-#e.build_book
+if ARGV[0].to_i == 0
+  test_book = WuxiaBook.new(ARGV[0])
+  puts 'wuxia'
+else
+  test_book = Book.new(ARGV[0].to_i)
+  puts 'rrl'
+end
+
+e = EpubBuilder.new(test_book)
+e.build_book
