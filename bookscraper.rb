@@ -103,6 +103,37 @@ class Book
   end
 end
 
+class WuxiaBook < Book
+  def book_url
+    "http://www.wuxiaworld.com/#{@book_number}"
+  end
+
+  def book_page_links
+    book_object.css('a').map{ |link| link['href'] }.select{ |l| l =~ /-chapter-/i }
+  end
+
+  def chapter_links
+    index_strings = book_page_links.map{ |l| l.split('/')[3] }
+    index_text = index_strings.group_by(&:itself).values.max_by(&:size).first
+    puts index_text
+    book_page_links.select{ |l| l =~ /#{index_text}/i }
+  end
+
+  def book_title
+    title_text = book_object.css('.entry-header h1').text
+    title_text.split(' ')[0...-3].join(' ')
+  end
+
+  def author
+    "unknown"
+  end
+
+  def chapters
+    @chapters ||= chapter_links.map{ |l| WuxiaChapter.new(l)}
+  end
+end
+
+
 class EpubBuilder
   def initialize(book)
     @book = book
@@ -161,6 +192,7 @@ class EpubBuilder
   end
 end
 
-test_book = Book.new(ARGV[0].to_i)
-e = EpubBuilder.new(test_book)
-e.build_book
+binding.pry
+#test_book = Book.new(ARGV[0].to_i)
+#e = EpubBuilder.new(test_book)
+#e.build_book
